@@ -9,6 +9,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +28,12 @@ public class Consumer implements ApplicationRunner {
     @Autowired
     ObjectAndByte objectAndByte;
 
+    @Value("${rocket.broker.name.server}")
+    String nameSrvAddr;
+
+    @Value("${rocket.consumer.group}")
+    String consumerGroup;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         this.consumer();
@@ -39,10 +46,10 @@ public class Consumer implements ApplicationRunner {
         logger.info("RocketMQ 消费者启动......！");
 
         // Instantiate with specified consumer group name.
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("please_rename_unique_group_name");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroup);
 
         // Specify name server addresses.
-        consumer.setNamesrvAddr("localhost:9876");
+        consumer.setNamesrvAddr(nameSrvAddr);
 
         // Subscribe one more more topics to consume.
         consumer.subscribe("TopicTest", "*");

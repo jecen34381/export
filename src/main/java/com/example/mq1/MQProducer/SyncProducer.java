@@ -8,6 +8,7 @@ import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.rmi.Remote;
@@ -22,14 +23,20 @@ public class SyncProducer implements Producer {
     @Autowired
     ObjectAndByte objectAndByte;
 
+    @Value("${rocket.broker.name.server}")
+    String nameSrvAddr;
+
+    @Value("${rocket.producer.group}")
+    String producerGroup;
+
     @Override
     public void send() throws Exception {
 
         //Instantiate with a producer group name
-        DefaultMQProducer producer = new DefaultMQProducer("mail");
+        DefaultMQProducer producer = new DefaultMQProducer(producerGroup);
 
         //Specify name server address
-        producer.setNamesrvAddr("localhost:9876");
+        producer.setNamesrvAddr(nameSrvAddr);
 
         //start
         producer.start();
