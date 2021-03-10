@@ -26,7 +26,7 @@ public class SyncProducer implements Producer {
     @Value("${rocket.broker.name.server}")
     String nameSrvAddr;
 
-    @Value("${rocket.producer.group}")
+    @Value("${rocket.consumer.group.excel}")
     String producerGroup;
 
     @Override
