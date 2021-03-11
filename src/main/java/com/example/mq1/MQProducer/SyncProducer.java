@@ -1,9 +1,12 @@
 package com.example.mq1.MQProducer;
 
 import com.example.mq1.bean.Mail;
+import com.example.mq1.factory.ProducerFactory;
 import com.example.mq1.util.ObjectAndByte;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
@@ -23,9 +26,6 @@ public class SyncProducer implements Producer {
     @Autowired
     ObjectAndByte objectAndByte;
 
-    @Value("${rocket.broker.name.server}")
-    String nameSrvAddr;
-
     @Value("${rocket.consumer.group.excel}")
     String producerGroup;
 
@@ -33,10 +33,10 @@ public class SyncProducer implements Producer {
     public void send() throws Exception {
 
         //Instantiate with a producer group name
-        DefaultMQProducer producer = new DefaultMQProducer(producerGroup);
+        MQProducer producer = ProducerFactory.getDefaultMQProduce(producerGroup);
 
-        //Specify name server address
-        producer.setNamesrvAddr(nameSrvAddr);
+       /* //Specify name server address
+        producer.setNamesrvAddr(nameSrvAddr);*/
 
         //start
         producer.start();

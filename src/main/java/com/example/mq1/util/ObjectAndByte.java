@@ -1,15 +1,13 @@
 package com.example.mq1.util;
 
-import com.example.mq1.bean.Mail;
-import org.junit.Test;
+import org.springframework.scheduling.config.AnnotationDrivenBeanDefinitionParser;
 import org.springframework.stereotype.Component;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
+
 
 @Component
 public class ObjectAndByte {
@@ -17,7 +15,6 @@ public class ObjectAndByte {
     /**
      * 对象转数组
      * @param obj
-     * @return
      */
     public byte[] toByteArray (Object obj) {
         byte[] bytes = null;
@@ -38,7 +35,6 @@ public class ObjectAndByte {
     /**
      * 数组转对象
      * @param bytes
-     * @return
      */
     public Object toObject (byte[] bytes) {
         Object obj = null;

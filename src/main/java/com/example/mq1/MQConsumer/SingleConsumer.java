@@ -31,7 +31,7 @@ public class SingleConsumer implements ApplicationRunner {
     @Value("${rocket.broker.name.server}")
     String nameSrvAddr;
 
-    @Value("${rocket.consumer.group}")
+    @Value("${rocket.consumer.group.excel}")
     String consumerGroup;
 
     @Override
