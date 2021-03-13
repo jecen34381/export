@@ -23,7 +23,7 @@ import java.util.List;
  * @Author zhangyonghe
  */
 @Component
-public class SingleConsumer implements ApplicationRunner {
+public class SingleConsumer implements Consumer {
 
     @Autowired
     ObjectAndByte objectAndByte;
@@ -43,7 +43,7 @@ public class SingleConsumer implements ApplicationRunner {
 
     public void consumer() throws Exception {
 
-        logger.info("RocketMQ 消费者启动......！");
+        logger.info(this.getClass().getName() + " 消费者启动......！");
 
         // Instantiate with specified consumer group name.
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroup);

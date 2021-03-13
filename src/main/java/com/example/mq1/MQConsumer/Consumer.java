@@ -1,10 +1,14 @@
 package com.example.mq1.MQConsumer;
 
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+
 /**
  * 消费者的顶级接口
  * @author zhangyonghe
  */
-public interface Consumer {
+public interface Consumer extends ApplicationRunner {
 
-    public void send();
+    @Override
+    void run(ApplicationArguments args) throws Exception;
 }

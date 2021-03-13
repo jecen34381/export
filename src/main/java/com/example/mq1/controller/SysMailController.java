@@ -1,5 +1,6 @@
 package com.example.mq1.controller;
 
+import com.example.mq1.MQProducer.OnewayProducer;
 import com.example.mq1.MQProducer.Producer;
 import com.example.mq1.MQProducer.SyncProducer;
 import com.example.mq1.bean.Mail;
@@ -18,17 +19,30 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@RequestMapping("/mail")
+@RequestMapping("/mq")
 @RestController
 public class SysMailController {
 
     @Autowired
     SyncProducer syncProducer;
 
-    @RequestMapping("/send")
+    @Autowired
+    OnewayProducer onewayProducer;
+
+    @RequestMapping("/send/mail")
     public Response<String> sendMail(HttpServletResponse response){
         try {
             syncProducer.send();
+            return new Response<String>("消息发送成功！");
+        } catch (Exception e) {
+            return new Response<String>("消息发送时出现异常！" + e.getMessage());
+        }
+    }
+
+    @RequestMapping("/send/sms")
+    public Response<String> sendSMS(HttpServletResponse response){
+        try {
+            onewayProducer.send();
             return new Response<String>("消息发送成功！");
         } catch (Exception e) {
             return new Response<String>("消息发送时出现异常！" + e.getMessage());
