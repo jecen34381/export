@@ -1,5 +1,6 @@
 package com.example.mq1.MQConsumer;
 
+import com.example.mq1.listener.MessageConcurrentlyListener;
 import com.example.mq1.util.ObjectAndByte;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -30,7 +31,7 @@ public class SMSConsumer implements Consumer{
     @Value("${rocket.mq.sms.group}")
     String groupName;
 
-    @Value("${rocket.mq.sms.send.student.topic}")
+    @Value("${rocket.consumer.group.excel}")
     String topic;
 
     @Value("${rocket.mq.sms.send.student.tag}")
@@ -45,19 +46,11 @@ public class SMSConsumer implements Consumer{
 
         DefaultMQPushConsumer pushConsumer = new DefaultMQPushConsumer(groupName);
 
-        pushConsumer.setNamesrvAddr("localhost:9876");
+        pushConsumer.setNamesrvAddr("192.168.56.1:9876");
 
-        pushConsumer.subscribe(topic, tag);
+        pushConsumer.subscribe("sms", "*");
 
-        pushConsumer.registerMessageListener(new MessageListenerConcurrently() {
-            @Override
-            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-                    for (MessageExt messageExt : list){
-                        System.err.println(objectAndByte.toObject(messageExt.getBody()));
-                    }
-                return null;
-            }
-        });
+        pushConsumer.registerMessageListener(new MessageConcurrentlyListener());
 
         pushConsumer.start();
     }

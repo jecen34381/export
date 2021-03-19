@@ -23,13 +23,13 @@ public class ProducerFactory {
      * @param producerGroup
      * @return
      */
-    public static  MQProducer getDefaultMQProduce(String producerGroup){
+    public static  DefaultMQProducer getDefaultMQProduce(String producerGroup){
 
         if (mqProducerPool.get(producerGroup) == null){
 
             mqProducerPool.put(producerGroup, new ProducerBuilder().build(producerGroup));
         }
-        return mqProducerPool.get(producerGroup);
+        return (DefaultMQProducer) mqProducerPool.get(producerGroup);
     }
 
 }

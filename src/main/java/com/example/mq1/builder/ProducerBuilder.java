@@ -19,10 +19,9 @@ public class ProducerBuilder {
 
     public DefaultMQProducer build(String producerGroup){
 
-        mqProducer = new DefaultMQProducer();
-        this.setNamesrvAddress();
-        this.setPrpducerGroup(producerGroup);
-        return this.mqProducer;
+        mqProducer = new DefaultMQProducer(producerGroup);
+        mqProducer.setNamesrvAddr(nameSrvAddr);
+        return mqProducer;
     }
 
     public ProducerBuilder setNamesrvAddress(){
@@ -32,7 +31,7 @@ public class ProducerBuilder {
         return this;
     }
 
-    public ProducerBuilder setPrpducerGroup(String producerGroup){
+    public ProducerBuilder setProducerGroup(String producerGroup){
         this.mqProducer.setProducerGroup(producerGroup);
         return this;
     }

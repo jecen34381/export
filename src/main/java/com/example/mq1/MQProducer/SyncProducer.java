@@ -33,10 +33,11 @@ public class SyncProducer implements Producer {
     public void send() throws Exception {
 
         //Instantiate with a producer group name
-        MQProducer producer = ProducerFactory.getDefaultMQProduce(producerGroup);
+        DefaultMQProducer producer = (DefaultMQProducer)ProducerFactory.getDefaultMQProduce(producerGroup);
 
-       /* //Specify name server address
-        producer.setNamesrvAddr(nameSrvAddr);*/
+
+       //Specify name server address
+        producer.setNamesrvAddr("localhost:9876");
 
         //start
         producer.start();

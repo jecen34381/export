@@ -7,9 +7,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,21 +23,18 @@ class Mq1ApplicationTests {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @Test
     void contextLoads() {
 
-        stringRedisTemplate.opsForValue().set("name", "snake");
-        Assert.assertEquals("snake", stringRedisTemplate.opsForValue().get("name"));
+        for (int i=0;i < 100;i++){
+            redisTemplate.opsForList().rightPush("lottery", (int)(Math.random() * 10));
+        }
 
     }
 
-    @Test
-    public void testLottery(){
-        Map<Integer, Integer> lotterySet = new HashMap<>();//奖项设置
 
-        String express = "1,2,3";
-
-        System.err.println(express.indexOf(","));
-    }
 
 }

@@ -3,6 +3,7 @@ package com.example.mq1.MQProducer;
 import com.example.mq1.factory.ProducerFactory;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
@@ -29,13 +30,15 @@ public class OnewayProducer implements Producer{
     @Override
     public void send() throws Exception {
 
-        MQProducer mqProducer = ProducerFactory.getDefaultMQProduce("groupName");
+        DefaultMQProducer mqProducer = (DefaultMQProducer) ProducerFactory.getDefaultMQProduce(groupName);
+
+        mqProducer.setNamesrvAddr("localhost:9876");
 
         mqProducer.start();
 
-        Message msg = new Message(topic, tag, "hello world!".getBytes(RemotingHelper.DEFAULT_CHARSET));
+        Message msg = new Message("sms"/* topic */, "tag1", "hello world!".getBytes(RemotingHelper.DEFAULT_CHARSET));
 
-        mqProducer.send(msg);
+        mqProducer.sendOneway(msg);
 
         Thread.sleep(3000);
 
