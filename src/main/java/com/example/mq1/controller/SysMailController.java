@@ -3,17 +3,28 @@ package com.example.mq1.controller;
 import com.example.mq1.MQProducer.OnewayProducer;
 import com.example.mq1.MQProducer.Producer;
 import com.example.mq1.MQProducer.SyncProducer;
+import com.example.mq1.bean.App;
 import com.example.mq1.bean.Mail;
 import com.example.mq1.bean.Response;
+import com.example.mq1.bean.Sms;
+import com.example.mq1.constant.CacheKey;
+import com.example.mq1.util.DateUtil;
+import com.example.mq1.util.FeigeSmsClient;
+import com.example.mq1.util.FeigeSmsRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.org.apache.xerces.internal.impl.dv.xs.StringDV;
+import io.netty.util.internal.StringUtil;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.java2d.pipe.SpanShapeRenderer;
+
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -21,15 +32,21 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowFocusListener;
 import java.rmi.Remote;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 @RequestMapping("/mq")
 @RestController
@@ -40,6 +57,9 @@ public class SysMailController {
 
     @Autowired
     OnewayProducer onewayProducer;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @RequestMapping("/send/mail")
     public Response<String> sendMail(HttpServletResponse response){
@@ -141,21 +161,68 @@ public class SysMailController {
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
+    /**
+     *
+     * 成单用户短信发送
+     * @param request
+     * @return
+     * @author 马喜明
+     */
+    @RequestMapping(value = "/v1/order/send")
+    public Response<?> send() {
 
-    @Test
-    public void contextLoads() {
 
-        RedisTemplate<String,Integer> redisTemplate = new RedisTemplate<String,Integer>();
+        //发送验证码到手机
+        FeigeSmsRequest feigeSmsRequest = new FeigeSmsRequest();
 
+        feigeSmsRequest.setMobile("13839453763");
+        feigeSmsRequest.setContent("");
+        String jsonMsg = this.getJSON(feigeSmsRequest);
+        redisTemplate.opsForList().leftPush(CacheKey.ORDER_SMS_MESSAGE,jsonMsg);
 
-        redisTemplate.opsForList().leftPush("lottery", 1);
-       /* System.out.println(redisTemplate);
-        for (int i=0;i < 100;i++){
-
-            redisTemplate.opsForList().leftPush("lottery", (int)(Math.random() * 10));
-        }*/
-
+        return new Response<>();
     }
 
+    /**
+     *
+     * 成单用户短信发送
+     * @param request
+     * @return
+     * @author 马喜明
+     */
+    @RequestMapping(value = "/v1/captcha/login/send")
+    public Response<?> captchaSend() {
 
+
+        //发送验证码到手机
+        FeigeSmsRequest feigeSmsRequest = new FeigeSmsRequest();
+
+        feigeSmsRequest.setMobile("17638170723");
+        feigeSmsRequest.setContent("123456");
+        feigeSmsRequest.setTemplateId(App.FEIGE_CAPTCHA_TEMPLATE_ID);
+        FeigeSmsClient client = new FeigeSmsClient();
+        client.templateSmsSend(feigeSmsRequest);
+        return new Response<>();
+    }
+
+    @Test
+    public void contextLoads() throws InterruptedException {
+
+        List<String> mobileList = new ArrayList<>();
+        for (int i = 0;i < 100;i++){
+            mobileList.add("name" + i);
+        }
+        String mobils = StringUtils.join(mobileList, ',');
+
+        System.out.println(mobils);
+    }
+
+    String getJSON(Object obj){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            return objectMapper.writeValueAsString(obj);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
