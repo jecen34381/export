@@ -29,6 +29,8 @@ public class SyncProducer implements Producer {
     @Value("${rocket.consumer.group.excel}")
     String producerGroup;
 
+
+
     @Override
     public void send() throws Exception {
 
@@ -54,7 +56,11 @@ public class SyncProducer implements Producer {
             System.out.printf("%s%n", sendResult);
         }
 
-        producer.shutdown();
+
+    }
+
+    @Override
+    public void shutDown() {
 
     }
 }

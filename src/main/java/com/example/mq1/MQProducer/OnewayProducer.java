@@ -1,13 +1,9 @@
 package com.example.mq1.MQProducer;
 
 import com.example.mq1.factory.ProducerFactory;
-import org.apache.rocketmq.client.exception.MQBrokerException;
-import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
-import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OnewayProducer implements Producer{
 
+
     @Value("${rocket.mq.sms.group}")
     String groupName;
 
@@ -27,8 +24,11 @@ public class OnewayProducer implements Producer{
     @Value("${rocket.mq.sms.send.student.tag}")
     String tag;
 
+
+
+
     @Override
-    public void send() throws Exception {
+    public synchronized void send() throws Exception {
 
         DefaultMQProducer mqProducer = (DefaultMQProducer) ProducerFactory.getDefaultMQProduce(groupName);
 
@@ -42,7 +42,14 @@ public class OnewayProducer implements Producer{
 
         Thread.sleep(3000);
 
-        mqProducer.shutdown();
+        //mqProducer.shutdown();
 
     }
+
+    @Override
+    public void shutDown() {
+
+    }
+
+
 }

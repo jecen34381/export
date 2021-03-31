@@ -8,6 +8,8 @@ import com.example.mq1.bean.Mail;
 import com.example.mq1.bean.Response;
 import com.example.mq1.bean.Sms;
 import com.example.mq1.constant.CacheKey;
+import com.example.mq1.util.AVL;
+import com.example.mq1.util.AVLProducer;
 import com.example.mq1.util.DateUtil;
 import com.example.mq1.util.FeigeSmsClient;
 import com.example.mq1.util.FeigeSmsRequest;
@@ -224,5 +226,31 @@ public class SysMailController {
         }catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void testAVL(){
+        AVLProducer<Integer> producer = new AVLProducer<>();
+        AVL<Integer> root = producer.createAVLRoot(5);
+
+        producer.push(3);
+        producer.push(7);
+        producer.push(9);
+        producer.push(1);
+        producer.push(2);
+        producer.push(6);
+        producer.push(8);
+        producer.push(4);
+
+        producer.preOrderTraverse();
+
+        System.out.println(producer.getDepth(root));
+    }
+
+    @Test
+    public void testSecurity(){
+        SecurityManager sm = new SecurityManager();
+        System.setSecurityManager(sm);
+        System.out.println(System.getProperty("java.security.manager"));
     }
 }

@@ -25,9 +25,12 @@ public class AsyncProducer implements Producer{
     @Value("${rocket.consumer.group.excel}")
     String producerGroup;
 
+
+
     @Override
     public void send() throws MQClientException, RemotingException, InterruptedException {
-        //Instantiate with a producer group name
+
+    //Instantiate with a producer group name
         DefaultMQProducer producer = (DefaultMQProducer)ProducerFactory.getDefaultMQProduce(producerGroup);
 
         //start producer
@@ -63,6 +66,11 @@ public class AsyncProducer implements Producer{
             }
         }
         countDownLatch.await(5, TimeUnit.SECONDS);
-        producer.shutdown();
+
+    }
+
+    @Override
+    public void shutDown() {
+
     }
 }

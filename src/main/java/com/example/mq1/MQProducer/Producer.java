@@ -5,4 +5,6 @@ import org.apache.rocketmq.client.exception.MQClientException;
 public interface Producer {
 
     public void send() throws MQClientException, Exception;
+
+    public void shutDown();
 }
