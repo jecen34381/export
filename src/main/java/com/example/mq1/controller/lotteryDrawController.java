@@ -1,6 +1,7 @@
 package com.example.mq1.controller;
 
 import com.example.mq1.bean.Response;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -40,5 +41,10 @@ public class lotteryDrawController {
         }
 
         return new Response<>();
+    }
+
+    @Test
+    public void testBranch(){
+        System.out.println("这是一个测试功能分支的代码。");
     }
 }
