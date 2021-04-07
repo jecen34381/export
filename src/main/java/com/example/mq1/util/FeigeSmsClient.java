@@ -154,4 +154,60 @@ public class FeigeSmsClient {
 		}
 	}
 
+	/**
+	 * 自定义内容的短信发送
+	 * @author 张永贺
+	 * @param feigeSmsRequest
+	 */
+	public boolean customSendSms(FeigeSmsRequest feigeSmsRequest) {
+
+		try {
+			CloseableHttpClient client = null;
+			CloseableHttpResponse response = null;
+			try {
+				//logger.info("FeiGe sms response : {} , {}", new ObjectMapper().writeValueAsString(feigeSmsRequest));
+				//请求参数设置
+				ArrayList<BasicNameValuePair> formparams = new ArrayList<BasicNameValuePair>();
+				requestParamSet(feigeSmsRequest, formparams);
+				//请求执行
+				HttpPost httpPost = new HttpPost(this.url);
+				httpPost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
+				client = HttpClients.createDefault();
+				response = client.execute(httpPost);
+				//响应
+				HttpEntity entity = response.getEntity();
+				String result = EntityUtils.toString(entity);
+				//logger.info(result);
+				//数据转换
+				FeiGeSendResponse feiGeSendResponse = this.transferSendResponseToFeiGeSendResponse(result);
+				//logger.info("yuntongxun sms response : {} , {}", feiGeSendResponse.getCode(), new ObjectMapper().writeValueAsString(feiGeSendResponse));
+				//Map<String, Object> resultMap = this.stringToMap(result);
+				//状态码为0，则表示发送成功
+				if (0 == feiGeSendResponse.getCode()){
+					return true;
+				}else{
+					return false;
+				}
+
+			} finally {
+				if (response != null) {
+					response.close();
+				}
+				if (client != null) {
+					client.close();
+				}
+			}
+		} catch (Exception e) {
+			logger.info("Sms error message:" + e.getMessage());
+			return false;
+		}
+	}
+	/**
+	 * 飞鸽平台返回的json字符串转换
+	 * @param sendResponse
+	 * @return
+	 */
+	public FeiGeSendResponse transferSendResponseToFeiGeSendResponse(String sendResponse){
+		return (FeiGeSendResponse)getObject(sendResponse, FeiGeSendResponse.class);
+	}
 }

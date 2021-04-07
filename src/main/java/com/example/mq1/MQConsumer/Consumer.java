@@ -11,4 +11,6 @@ public interface Consumer extends ApplicationRunner {
 
     @Override
     void run(ApplicationArguments args) throws Exception;
+
+
 }

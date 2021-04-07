@@ -2,6 +2,7 @@ package com.example.mq1.bean;
 
 public class App {
 
+    public static String ID = null;
     public static final String FEIGE_ACCOUNT = "15699708348";
     public static final String FEIGE_PWD = "52bec9923fa0cc31a6cb92c23";
     public static final String FEIGE_SIGNID = "393343";
@@ -13,6 +14,7 @@ public class App {
     public static String FEIGE_PROMOTION_TWO_HOURS_SMS_CONTENT = "同学您好，欢迎来到众学！我们将于2个小时内与您取得联系！请保持手机畅通！2021法考最新课程已开课，专属定制学习计划，一对一精准辅导助您无忧通关！限时咨询16264403382(同微)  退订回T。";
     public static String FEIGE_PROMOTION_EIGHT_HOURS_SMS_CONTENT = "同学您好，欢迎来到众学！我们将于8个小时内与您取得联系！请保持手机畅通！2021法考最新课程已开课，专属定制学习计划，一对一精准辅导助您无忧通关！限时咨询16264403382(同微)  退订回T。";
 
+    public static long FEIGE_PROMOTION_CACHE_UPPER_LIMIT = 20;
 
 
     //棋子

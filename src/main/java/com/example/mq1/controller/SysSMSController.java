@@ -1,7 +1,13 @@
 package com.example.mq1.controller;
 
+import com.example.mq1.MQProducer.MQProducer;
 import com.example.mq1.bean.Response;
+import com.example.mq1.bean.SMSPayload;
 import com.example.mq1.constant.CacheKey;
+import com.example.mq1.en.SMSType;
+import com.example.mq1.util.DateUtil;
+import com.example.mq1.util.LogSequence;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,5 +70,41 @@ public class SysSMSController {
         }
 
         return null;
+    }
+
+    /**
+     * 使用飞鸽平台发送推广短信
+     * <p>使用mq发送 马喜明</p>
+     * @author 张永贺
+     * @param mobile
+     */
+    @RequestMapping("/v1/ad/user/pro/send/consumer/message")
+    public void customFeiGeSmsSend(String mobile){
+        //缓存处理批量发送
+        Date datetime = this.getServerTime();
+        //设置发送参数
+        SMSPayload smsPayload = new SMSPayload();
+        smsPayload.setMobile(mobile);
+        smsPayload.setCreateTime(datetime);
+        String code = LogSequence.get();
+        smsPayload.setCode(code);
+
+        smsPayload.setType(SMSType.C2.getCode());
+        // 发送到mq
+        MQProducer.INSTANCE.sendOneway(code, "zxwy-api-topic", "zxwy-api-sms-tag", this.getJSON(smsPayload));
+    }
+
+    Date getServerTime(){
+        return DateUtil.getServerTime();
+    }
+
+
+    String getJSON(Object obj){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try{
+            return objectMapper.writeValueAsString(obj);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
