@@ -79,7 +79,7 @@ public class SysSMSController {
      * @param mobile
      */
     @RequestMapping("/v1/ad/user/pro/send/consumer/message")
-    public void customFeiGeSmsSend(String mobile){
+    public void customFeiGeSmsSend(@RequestParam("mobile") String mobile){
         //缓存处理批量发送
         Date datetime = this.getServerTime();
         //设置发送参数
