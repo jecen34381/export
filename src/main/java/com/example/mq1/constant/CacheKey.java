@@ -14,4 +14,9 @@ public class CacheKey {
      * 系统用户操作日志
      */
     public static final String SYS_LOG = "CK1024";
+
+    /**
+     * 营销消息批次发送缓存池
+     */
+    public static final String FEIGE_SMS_PROMOTION_MESSAGE_SEND = "CK1054";
 }
