@@ -40,6 +40,8 @@ public class lotteryDrawController {
             redisTemplate.opsForList().rightPush("lottery", String.valueOf((int)(Math.random() * 10)));
         }
 
+
+
         return new Response<>();
     }
 
