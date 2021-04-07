@@ -6,14 +6,14 @@ import java.io.Serializable;
 
 
 @Component
-public class Mail implements Serializable {
+public class Mail implements Serializable{
 
 
-    public String mailFrom;
-    public String mailTo;
+    private String mailFrom;
+    private String mailTo;
 
-    public boolean sendHtml;
-    public String body;
+    private boolean sendHtml;
+    private String body;
 
     public Mail() {
     }
@@ -65,5 +65,20 @@ public class Mail implements Serializable {
                 ", sendHtml=" + sendHtml +
                 ", body='" + body + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        System.out.println(this.mailFrom + ":" + ((Mail)obj).mailFrom);
+        if (this.mailFrom.equals(((Mail)obj).mailFrom)){
+            ((Mail)obj).setBody(((Mail)obj).getBody() + "," + this.getBody());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 1;
     }
 }

@@ -1,13 +1,17 @@
 package com.example.mq1.MQProducer;
 
 import com.example.mq1.bean.Mail;
+import com.example.mq1.factory.ProducerFactory;
 import com.example.mq1.util.ObjectAndByte;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.rmi.Remote;
@@ -22,13 +26,19 @@ public class SyncProducer implements Producer {
     @Autowired
     ObjectAndByte objectAndByte;
 
+    @Value("${rocket.consumer.group.excel}")
+    String producerGroup;
+
+
+
     @Override
     public void send() throws Exception {
 
         //Instantiate with a producer group name
-        DefaultMQProducer producer = new DefaultMQProducer("mail");
+        DefaultMQProducer producer = (DefaultMQProducer)ProducerFactory.getDefaultMQProduce(producerGroup);
 
-        //Specify name server address
+
+       //Specify name server address
         producer.setNamesrvAddr("localhost:9876");
 
         //start
@@ -46,7 +56,11 @@ public class SyncProducer implements Producer {
             System.out.printf("%s%n", sendResult);
         }
 
-        producer.shutdown();
+
+    }
+
+    @Override
+    public void shutDown() {
 
     }
 }
