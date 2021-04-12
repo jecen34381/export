@@ -1,6 +1,7 @@
 package com.example.mq1.util;
 
 import com.alibaba.fastjson.JSON;
+import com.example.mq1.MQProducer.MQProducer;
 import com.example.mq1.bean.App;
 import com.example.mq1.bean.FeiGeSendResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +81,8 @@ public class FeigeSmsClient {
 	 * @param feigeSmsRequest
 	 */
 
-	public void templateSmsSend(FeigeSmsRequest feigeSmsRequest){
+	public String templateSmsSend(FeigeSmsRequest feigeSmsRequest){
+		String result = null;
 		try {
 			CloseableHttpClient client = null;
 			CloseableHttpResponse response = null;
@@ -95,7 +99,7 @@ public class FeigeSmsClient {
 				response = client.execute(httpPost);
 				//响应
 				HttpEntity entity = response.getEntity();
-				String result = EntityUtils.toString(entity);
+				result = EntityUtils.toString(entity);
 				logger.info(result);
 				FeiGeSendResponse feiGeSendResponse = (FeiGeSendResponse)getObject(result, FeiGeSendResponse.class);
 				System.out.println(feiGeSendResponse.getBlackCount() + ":" + feiGeSendResponse.getCode() + ":" + feiGeSendResponse.getSuccessCount());
@@ -118,7 +122,7 @@ public class FeigeSmsClient {
 			logger.info(e.getMessage());
 			logger.info("发送失败！");
 		}
-
+		return result;
 	}
 	/**
 	 * 请求参数设置
@@ -177,9 +181,10 @@ public class FeigeSmsClient {
 				//响应
 				HttpEntity entity = response.getEntity();
 				String result = EntityUtils.toString(entity);
-				//logger.info(result);
+				logger.info(result);
 				//数据转换
 				FeiGeSendResponse feiGeSendResponse = this.transferSendResponseToFeiGeSendResponse(result);
+                System.out.println(feiGeSendResponse);
 				//logger.info("yuntongxun sms response : {} , {}", feiGeSendResponse.getCode(), new ObjectMapper().writeValueAsString(feiGeSendResponse));
 				//Map<String, Object> resultMap = this.stringToMap(result);
 				//状态码为0，则表示发送成功
@@ -210,4 +215,5 @@ public class FeigeSmsClient {
 	public FeiGeSendResponse transferSendResponseToFeiGeSendResponse(String sendResponse){
 		return (FeiGeSendResponse)getObject(sendResponse, FeiGeSendResponse.class);
 	}
+
 }

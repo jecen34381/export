@@ -22,7 +22,7 @@ import java.util.List;
  * sms消费者
  * @author zhangyonghe
  */
-@Component
+//@Component
 public class SMSConsumer implements Consumer{
 
     @Autowired
@@ -52,6 +52,6 @@ public class SMSConsumer implements Consumer{
 
         pushConsumer.registerMessageListener(new MessageConcurrentlyListener());
 
-        pushConsumer.start();
+        //pushConsumer.start();
     }
 }

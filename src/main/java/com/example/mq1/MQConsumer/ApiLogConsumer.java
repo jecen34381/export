@@ -8,7 +8,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class ApiLogConsumer implements Consumer {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -26,6 +26,6 @@ public class ApiLogConsumer implements Consumer {
 
         pushConsumer.registerMessageListener(new MessageConcurrentlyListener());
 
-        pushConsumer.start();
+        //pushConsumer.start();
     }
 }

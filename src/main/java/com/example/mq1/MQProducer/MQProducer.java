@@ -2,6 +2,7 @@ package com.example.mq1.MQProducer;
 
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +27,17 @@ public enum MQProducer {
         mqProducer.setInstanceName(instanceName);
         mqProducer.setProducerGroup(groupName);
 
-    }
 
+    }
+    public void start(){
+        logger.info("zxwy api mq producer start");
+        try {
+            mqProducer.start();
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+            throw new RuntimeException(e);
+        }
+    }
     public void sendOneway(String key,String topic,String tag,String body){
         try{
             logger.info("zxwy api produce oneway message : {}, {}, {}, {}", key,topic,tag,body);
@@ -40,5 +50,9 @@ public enum MQProducer {
         }catch(Exception e){
             logger.error(e.getMessage(),e);
         }
+    }
+
+    public DefaultMQProducer getProducer(){
+        return mqProducer;
     }
 }

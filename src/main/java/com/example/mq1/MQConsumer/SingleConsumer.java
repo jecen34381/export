@@ -30,7 +30,7 @@ import java.util.Map;
  * RocketMQ 消费者
  * @Author zhangyonghe
  */
-@Component
+//@Component
 public class SingleConsumer implements Consumer {
 
     @Autowired

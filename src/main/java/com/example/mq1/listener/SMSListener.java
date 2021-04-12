@@ -1,6 +1,7 @@
 package com.example.mq1.listener;
 
 import com.example.mq1.bean.App;
+import com.example.mq1.bean.FeiGeSendResponse;
 import com.example.mq1.bean.SMSPayload;
 import com.example.mq1.constant.CacheKey;
 import com.example.mq1.util.DateUtil;
@@ -32,7 +33,7 @@ public class SMSListener implements MessageListenerConcurrently {
 	UserDao userDao;*/
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
-
+	@Override
 	public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
 		try {
 			Date datetime = DateUtil.getServerTime();
@@ -48,7 +49,9 @@ public class SMSListener implements MessageListenerConcurrently {
 							customFeiGeSmsSend(mobiles);
 						}
 						break;
-					case "1":break;
+					case "1":
+						templateFeiGeSmsOrderSend(smsPayload);
+						break;
 					case "0":break;
 				}
 
@@ -57,6 +60,41 @@ public class SMSListener implements MessageListenerConcurrently {
 			logger.error(e.getMessage(),e);
 		}
 		return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+	}
+
+	/**
+	 * 使用飞鸽平台发送成单短信
+	 * @author 张永贺 2021-04-12
+	 * @param smsPayload
+	 */
+	public void templateFeiGeSmsOrderSend(SMSPayload smsPayload){
+		Date datetime = DateUtil.getServerTime();
+		//组装入参
+		FeigeSmsRequest request = new FeigeSmsRequest();
+		request.setMobile(smsPayload.getMobile());
+		request.setTemplateId(App.FEIGE_ORDER_TEMPLATE_ID);
+		//初始化发送端发送
+		System.out.println(request.getMobile());
+		FeigeSmsClient feigeSmsClient = new FeigeSmsClient();
+		String sendResponse = feigeSmsClient.templateSmsSend(request);
+		//解析反参，封装对象
+		FeiGeSendResponse feiGeSendResponse = feigeSmsClient.transferSendResponseToFeiGeSendResponse(sendResponse);
+		logger.info("leave master sms send to {}",request.getMobile());
+		// 发送成功 再进行记录
+		/*try{
+			if (0 == feiGeSendResponse.getCode()) {
+				UserMessage userMessage = new UserMessage();
+				userMessage.setUserId(request.getUserId());
+				userMessage.setStatus(DataStatus.Y.getCode());
+				userMessage.setType(UserMessageType.SMS.getCode());
+				userMessage.setContent(App.FEIGE_ORDER_SMS_CONTENT);
+				userMessage.setCreateTime(datetime);
+				userMessage.setModifyTime(datetime);
+				userMessageDao.insert(userMessage);
+			}
+		}catch (Exception e){
+			logger.error("order sms error message {},{}",e.getMessage(),e);
+		}*/
 	}
 
 	/**
@@ -80,7 +118,6 @@ public class SMSListener implements MessageListenerConcurrently {
 		}else{
 			request.setContent(App.FEIGE_PROMOTION_EIGHT_HOURS_SMS_CONTENT);
 		}
-
 		//初始化发送端
 		FeigeSmsClient client = new FeigeSmsClient();
 		//返回结果是否发送成功
@@ -90,8 +127,8 @@ public class SMSListener implements MessageListenerConcurrently {
 		//根据手机号查询用户id
 		//User user = userDao.selectByUsername(payload.getMobile());
 		try {
-			if (success) {
-				/*for (User user : users) {
+			/*if (success) {
+				*//*for (User user : users) {
 					UserMessage userMessage = new UserMessage();
 					userMessage.setUserId(user.getId());
 					userMessage.setStatus(DataStatus.Y.getCode());
@@ -100,8 +137,8 @@ public class SMSListener implements MessageListenerConcurrently {
 					userMessage.setCreateTime(datetime);
 					userMessage.setModifyTime(datetime);
 					userMessageDao.insert(userMessage);
-				}*/
-			}
+				}*//*
+			}*/
 		}catch (Exception e){
 			logger.error("Promotion sms error message {},{}",e.getMessage(),e);
 		}
