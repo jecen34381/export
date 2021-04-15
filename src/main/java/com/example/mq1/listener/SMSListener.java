@@ -4,6 +4,7 @@ import com.example.mq1.bean.App;
 import com.example.mq1.bean.FeiGeSendResponse;
 import com.example.mq1.bean.SMSPayload;
 import com.example.mq1.constant.CacheKey;
+import com.example.mq1.en.SMSType;
 import com.example.mq1.util.DateUtil;
 import com.example.mq1.util.FeigeSmsClient;
 import com.example.mq1.util.FeigeSmsRequest;
@@ -42,17 +43,21 @@ public class SMSListener implements MessageListenerConcurrently {
 				logger.info("zxwy data consume sms message : {}", body);
 				SMSPayload smsPayload = (SMSPayload)getObject(body, SMSPayload.class);
 				//类型 0:验证码 1:通知  2:营销
-				switch (smsPayload.getType()){
-					case "2":
-						String mobiles = batchCacheMessage(smsPayload.getMobile(), App.FEIGE_PROMOTION_CACHE_UPPER_LIMIT);
+				switch (SMSType.get(smsPayload.getType())){
+					case C2:
+						logger.info("发送 {} 消息！", SMSType.get(smsPayload.getType()).getName());
+						/*String mobiles = batchCacheMessage(smsPayload.getMobile(), App.FEIGE_PROMOTION_CACHE_UPPER_LIMIT);
 						if (mobiles != null){
 							customFeiGeSmsSend(mobiles);
-						}
+						}*/
 						break;
-					case "1":
-						templateFeiGeSmsOrderSend(smsPayload);
+					case C1:
+						logger.info("发送 {} 消息！", SMSType.get(smsPayload.getType()).getName());
+						/*templateFeiGeSmsOrderSend(smsPayload);*/
 						break;
-					case "0":break;
+					case C0:
+						logger.info("发送 {} 消息！", SMSType.get(smsPayload.getType()).getName());
+						break;
 				}
 
 			}
@@ -100,7 +105,7 @@ public class SMSListener implements MessageListenerConcurrently {
 	/**
 	 * 使用飞鸽平台发送推广短信
 	 * @author 张永贺
-	 * @param payload
+	 * @param mobiles
 	 */
 	public void customFeiGeSmsSend(String mobiles){
 		Date datetime = DateUtil.getServerTime();

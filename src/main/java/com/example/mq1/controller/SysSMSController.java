@@ -1,6 +1,7 @@
 package com.example.mq1.controller;
 
 import com.example.mq1.MQProducer.MQProducer;
+import com.example.mq1.bean.App;
 import com.example.mq1.bean.Response;
 import com.example.mq1.bean.SMSPayload;
 import com.example.mq1.bean.User;
@@ -9,6 +10,8 @@ import com.example.mq1.en.SMSType;
 import com.example.mq1.util.DateUtil;
 import com.example.mq1.util.LogSequence;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.util.Lists;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageTranscoder;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class SysSMSController {
@@ -148,7 +154,7 @@ public class SysSMSController {
             String code = LogSequence.get();
             smsPayload.setCode(code);
 
-            smsPayload.setType(SMSType.C1.getCode());
+            smsPayload.setType(SMSType.C2.getCode());
             // 发送到mq
             MQProducer.INSTANCE.sendOneway(code, "zxwy-api-topic", "zxwy-api-sms-tag", this.getJSON(smsPayload));
         }
@@ -197,4 +203,27 @@ public class SysSMSController {
         }
         return null;
     }*/
+
+    @Test
+    public void testOptional(){
+        List<Integer> list1 = new ArrayList<>();
+        for (int i = 0;i < 10;i ++)
+            list1.add(i);
+        Integer i1 = 0;
+        Integer i2 = null;
+        Optional<Integer> money = Optional.of(i1);
+        Optional<Integer> m1 = Optional.ofNullable(i2);
+        Optional<Integer> m2 = list1.stream().parallel().findAny();
+        System.out.println(m2.get());
+
+        List<String> habit = Lists.newArrayList("cli", "run", "eat", "fly", "dance", "bike", "basket", "draw", "song", "balance", "bee", "blank", "bit", "back", "bill", "ball", "ban");
+        habit.stream().filter(h -> h.startsWith("b")).sorted(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o2.compareTo(o1);
+            }
+        }).limit(5).collect(Collectors.toList()).stream().forEach(result -> {
+            System.err.println(result);
+        });
+    }
 }
